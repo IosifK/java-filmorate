@@ -8,11 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -20,32 +18,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
-    private final List<Film> films = new ArrayList<>();
+    private final Map<Integer, Film> films = new HashMap<>();
     private final AtomicInteger idCounter = new AtomicInteger(1);
 
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
+        log.info("пришел Post запрос /films с телом: {}", film);
         film.setId(idCounter.getAndIncrement());
-        films.add(film);
-        log.info("Добавлен фильм: {}", film);
+        films.put(film.getId(), film);
+        log.info("отправлен ответ Post /films с телом: {}", film);
         return new ResponseEntity<>(film, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film film) {
-        Optional<Film> existingFilm = films.stream()
-                .filter(f -> f.getId() == film.getId())
-                .findFirst();
+        log.info("пришел Put запрос /films с телом: {}", film);
 
-        if (existingFilm.isPresent()) {
-            Film updatedFilm = existingFilm.get();
-            updatedFilm.setName(film.getName());
-            updatedFilm.setDescription(film.getDescription());
-            updatedFilm.setReleaseDate(film.getReleaseDate());
-            updatedFilm.setDuration(film.getDuration());
-
-            log.info("Обновлен фильм: {}", updatedFilm);
-            return new ResponseEntity<>(updatedFilm, HttpStatus.OK);
+        if (films.containsKey(film.getId())) {
+            films.put(film.getId(), film);
+            log.info("отправлен ответ Put /films с телом: {}", film);
+            return new ResponseEntity<>(film, HttpStatus.OK);
         } else {
             String errorMessage = String.format("Фильм с id %d не найден", film.getId());
             log.warn(errorMessage);
@@ -55,9 +47,12 @@ public class FilmController {
 
     @GetMapping
     public List<Film> getAllFilms() {
-        return films;
+        List<Film> filmList = new ArrayList<>(films.values());
+        log.info("Запрос Get /films, ответ: {}", filmList);
+        return filmList;
     }
 }
+
 
 
 
