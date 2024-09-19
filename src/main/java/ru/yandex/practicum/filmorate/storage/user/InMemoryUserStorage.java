@@ -69,6 +69,7 @@ public class InMemoryUserStorage implements UserStorage {
         friend.getFriends().add(userId);
     }
 
+
     @Override
     public void removeFriend(int userId, int friendId) {
         if (!users.containsKey(userId)) {
@@ -82,7 +83,7 @@ public class InMemoryUserStorage implements UserStorage {
         User friend = getUserById(friendId);
 
         if (!user.getFriends().contains(friendId)) {
-            throw new NoSuchElementException("Пользователь с id " + friendId + " не найден в списке друзей пользователя с id " + userId);
+            return;
         }
 
         user.getFriends().remove(friendId);

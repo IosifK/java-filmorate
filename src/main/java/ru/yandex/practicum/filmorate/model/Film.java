@@ -10,7 +10,9 @@ import java.util.Set;
 
 @Data
 public class Film {
+
     private Set<Integer> likes = new HashSet<>();
+
     private int id;
 
     @NotBlank(message = "название не может быть пустым")

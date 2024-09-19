@@ -53,6 +53,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
 
+
     @Override
     public void addLike(int filmId, int userId) {
         if (!userExist(userId)) {
@@ -65,6 +66,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         film.getLikes().add(userId);
     }
+
 
     @Override
     public void removeLike(int filmId, int userId) {

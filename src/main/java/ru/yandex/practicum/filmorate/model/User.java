@@ -17,6 +17,7 @@ import java.util.Set;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
     private Set<Integer> friends = new HashSet<>();
+
     private int id;
 
     @Email(message = "некорректный формат email.")
