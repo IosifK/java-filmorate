@@ -16,10 +16,8 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
+
     public User createUser(User user) {
-        if (user.getName() == null || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
         return userStorage.createUser(user);
     }
 
@@ -27,13 +25,11 @@ public class UserService {
         return userStorage.updateUser(user);
     }
 
+
     public User getUserById(int id) {
-        User user = userStorage.getUserById(id);
-        if (user == null) {
-            throw new NullPointerException("Пользователь с id " + id + " не найден");
-        }
-        return user;
+        return userStorage.getUserById(id);
     }
+
 
     public List<User> getAllUsers() {
         return userStorage.getAllUsers();

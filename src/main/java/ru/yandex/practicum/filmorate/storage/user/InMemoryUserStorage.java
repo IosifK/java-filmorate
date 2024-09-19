@@ -11,8 +11,12 @@ public class InMemoryUserStorage implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
     private final AtomicInteger idCounter = new AtomicInteger(1);
 
+
     @Override
     public User createUser(User user) {
+        if (user.getName() == null || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         user.setId(idCounter.getAndIncrement());
         user.setFriends(new HashSet<>());
         users.put(user.getId(), user);
@@ -30,13 +34,13 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
+
     @Override
     public User getUserById(int id) {
-        if (users.containsKey(id)) {
-            return users.get(id);
-        } else {
+        if (!users.containsKey(id)) {
             throw new NoSuchElementException("Пользователь с id " + id + " не найден");
         }
+        return users.get(id);
     }
 
     @Override
@@ -44,21 +48,47 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values());
     }
 
+
     @Override
     public void addFriend(int userId, int friendId) {
+        if (!users.containsKey(userId)) {
+            throw new NoSuchElementException("Пользователь с id " + userId + " не найден");
+        }
+        if (!users.containsKey(friendId)) {
+            throw new NoSuchElementException("Пользователь с id " + friendId + " не найден");
+        }
+
         User user = getUserById(userId);
         User friend = getUserById(friendId);
+
+        if (user.getFriends().contains(friendId)) {
+            throw new IllegalArgumentException("Пользователь с id " + friendId + " уже добавлен в друзья");
+        }
+
         user.getFriends().add(friendId);
         friend.getFriends().add(userId);
     }
 
     @Override
     public void removeFriend(int userId, int friendId) {
+        if (!users.containsKey(userId)) {
+            throw new NoSuchElementException("Пользователь с id " + userId + " не найден");
+        }
+        if (!users.containsKey(friendId)) {
+            throw new NoSuchElementException("Пользователь с id " + friendId + " не найден");
+        }
+
         User user = getUserById(userId);
         User friend = getUserById(friendId);
+
+        if (!user.getFriends().contains(friendId)) {
+            throw new NoSuchElementException("Пользователь с id " + friendId + " не найден в списке друзей пользователя с id " + userId);
+        }
+
         user.getFriends().remove(friendId);
         friend.getFriends().remove(userId);
     }
+
 
     @Override
     public List<User> getFriends(int userId) {

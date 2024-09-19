@@ -8,14 +8,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
+
     @ExceptionHandler(BindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationException(final BindException e) {
         log.error("Ошибка валидации: {}", e.getMessage());
-        return Map.of("error", "Ошибка валидации", "message", e.getMessage()
+        return Map.of(
+                "error", "Ошибка валидации",
+                "message", "Некорректные данные: " + e.getFieldError().getDefaultMessage()
         );
     }
 
@@ -23,7 +27,9 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(final NoSuchElementException e) {
         log.error("Объект не найден: {}", e.getMessage());
-        return Map.of("error", "Объект не найден", "message", e.getMessage()
+        return Map.of(
+                "error", "Объект не найден",
+                "message", e.getMessage()
         );
     }
 
@@ -31,7 +37,9 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleException(final Exception e) {
         log.error("Внутренняя ошибка сервера: {}", e.getMessage());
-        return Map.of("error", "Внутренняя ошибка сервера", "message", e.getMessage()
+        return Map.of(
+                "error", "Внутренняя ошибка сервера",
+                "message", "Произошла непредвиденная ошибка"
         );
     }
 }
