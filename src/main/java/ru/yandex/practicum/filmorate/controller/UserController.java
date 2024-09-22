@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.*;
 
-
 @RestController
 @RequestMapping("/users")
 @Slf4j
@@ -25,32 +24,34 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         log.info("пришёл POST запрос /users с телом: {}", user);
         User createdUser = userService.createUser(user);
         log.info("отправлен ответ POST /users с телом: {}", createdUser);
-        return createdUser;
+        return ResponseEntity.ok(createdUser);
     }
 
     @PutMapping
-    public User updateUser(@Valid @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
         log.info("пришёл PUT запрос /users с телом: {}", user);
         User updatedUser = userService.updateUser(user);
         log.info("отправлен ответ PUT /users с телом: {}", updatedUser);
-        return updatedUser;
+        return ResponseEntity.ok(updatedUser);
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         log.info("Запрос GET /users, ответ: {}", users);
-        return users;
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable int id) {
+    public ResponseEntity<User> getUserById(@PathVariable int id) {
         log.info("Запрос GET /users/{}", id);
-        return userService.getUserById(id);
+        User user = userService.getUserById(id);
+        log.info("отправлен ответ GET /users/{} с телом: {}", id, user);
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -58,6 +59,7 @@ public class UserController {
         log.info("Пользователь {} добавляет в друзья пользователя {}", id, friendId);
         userService.addFriend(id, friendId);
         User updatedUser = userService.getUserById(id);
+        log.info("отправлен ответ PUT /users/{}/friends/{} с телом: {}", id, friendId, updatedUser);
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -66,19 +68,24 @@ public class UserController {
         log.info("Пользователь {} удаляет из друзей пользователя {}", id, friendId);
         userService.removeFriend(id, friendId);
         User updatedUser = userService.getUserById(id);
+        log.info("отправлен ответ DELETE /users/{}/friends/{} с телом: {}", id, friendId, updatedUser);
         return ResponseEntity.ok(updatedUser);
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> getFriends(@PathVariable int id) {
+    public ResponseEntity<List<User>> getFriends(@PathVariable int id) {
         log.info("Запрос GET /users/{}/friends", id);
-        return userService.getFriends(id);
+        List<User> friends = userService.getFriends(id);
+        log.info("отправлен ответ GET /users/{}/friends с телом: {}", id, friends);
+        return ResponseEntity.ok(friends);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+    public ResponseEntity<List<User>> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
         log.info("Запрос GET /users/{}/friends/common/{}", id, otherId);
-        return userService.getCommonFriends(id, otherId);
+        List<User> commonFriends = userService.getCommonFriends(id, otherId);
+        log.info("отправлен ответ GET /users/{}/friends/common/{} с телом: {}", id, otherId, commonFriends);
+        return ResponseEntity.ok(commonFriends);
     }
 }
 

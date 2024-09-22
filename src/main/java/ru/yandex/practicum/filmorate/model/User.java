@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +17,6 @@ import java.util.Set;
 @Data
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
-    private Set<Integer> friends = new HashSet<>();
 
     private int id;
 
@@ -33,5 +33,7 @@ public class User {
     @Past(message = "дата рождения не может быть в будущем.")
     private LocalDate birthday;
 
+    @JsonIgnore
+    private Set<Integer> friends = new HashSet<>();
 
 }
