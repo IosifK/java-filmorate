@@ -1,15 +1,16 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * Film.
- */
 @Data
 public class Film {
+
     private int id;
 
     @NotBlank(message = "название не может быть пустым")
@@ -26,5 +27,7 @@ public class Film {
     @Positive(message = "продолжительность фильма должна быть положительным числом.")
     private int duration;
 
+    @JsonIgnore
+    private Set<Integer> likes = new HashSet<>();
 
 }
